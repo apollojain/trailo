@@ -31,11 +31,13 @@ So, the first thing you want to do is actually create the application. In order 
 $ rails new trailo
 ```
 What this will do is actually create a new Rails application called trailo. Now, go into your new trailo directory and open a file called "Gemfile". At the bottom of the file, include the following line: 
-
+```
 gem 'devise'
-
+```
 This line will place a package that allows for user authenficiation inside of your Rails application. Next, cd into your "trailo" directory, or in other words into the directory 
+```
 .../trailo/
+```
 and run the following commands:
 ```
 $ bundle install
