@@ -25,7 +25,7 @@ So now, a little bit on what Rails is and what the Model View Controller(MVC) co
 In order to understand what an MVC is, let us examine a Facebook Post. A <b>Controller</b> basically sends commands to the model to update its state. So, when you hit the "post" button on a status update, a controller is basically changing the content of a model. A <b>Model</b>, which stores data that is retrieved by the controller and displayed by the view. So, the model for a Status would consist of a String and a Text Block, where the String is the name of the poster, and the Text Block is the contents of the post. The <b>View</b> is how the Model is actually displayed. So, when you log into Facebook, and you see people posting their Statuses on their walls, this is the View. 
 
 Step 1: Creating the app and setting up dependancies. 
-=========================++
+=========================
 So, the first thing you want to do is actually create the application. In order to do this, you want to enter the following line in a directory of your choice: 
 '''
 rails new trailo
