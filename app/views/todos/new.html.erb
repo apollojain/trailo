@@ -1,0 +1,6 @@
+<h1>Add new item to your Trailo To do list!</h1>
+<%= form_for @todo, :url => todos_path(@todo) do |f| %>
+	<%= f.label :name %>: <%= f.text_field :name %>
+	<%= f.hidden_field :done, :value => false %>
+	<%= f.submit "Add to todo list" %>
+<%end %>

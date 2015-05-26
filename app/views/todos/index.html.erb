@@ -1,0 +1,19 @@
+<h1>Trailo items</h1>
+
+<h2>To do:</h2>
+<% @todos.each do |t| %>
+	<p>
+		<strong><%= t.name %></strong>
+		<small><%= link_to "Mark as Done", todo_path(t), :method => :put %></small>
+	</p>
+<%end %>
+
+<h2>Complete:</h2>
+<% @done.each do |t| %>
+	<p>
+		<%= t.name %>
+		<small><%= link_to "Remove", t, :confirm => "is it ok to remove this from the list?", :method => :delete %></small>
+	</p>
+<% end %>
+
+<p><%= link_to "Add an item to the list", new_todo_path %></p>

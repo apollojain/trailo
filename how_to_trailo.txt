@@ -1,0 +1,111 @@
+1. rails new Trailo
+2. cd into Trailo, open up Gemfile
+3. add line gem 'devise' into Gemfile
+
+4. rails g devise:install
+
+5. rails g devise user
+
+6. rake db:migrate
+
+7. rails g controller home (look at app/views/home and add index.html.erb)
+
+8. create file index.html.erb in here, add 
+
+<h1>Welcome to Trailo!</h1>
+
+9. go to config/routes.rb
+add line 
+root :to => "home#index"
+
+10. Add the following code to Home controller app/controllers/home_controller.rb
+
+class HomeController < ApplicationController
+	def index
+		if user_signed_in?
+			redirect_to :controller => "todo", :action => "index"
+		end
+	end
+end
+
+11. rails g controller todo
+
+12. Add the following line to config/routes.rb
+
+resources:trailo
+
+13. rails g model todo name:string done:boolean
+
+14. Create file app/view/todo/index.html.erb and insert the following code: 
+
+<h1>Trailo items</h1>
+
+<h2>To do:</h2>
+<% @todos.each do |t| %>
+	<p>
+		<strong><%= t.name %></strong>
+		<small><%= link_to "Mark as Done", todo_path(t), :method => :put %></small>
+	</p>
+<%end %>
+
+<h2>Complete:</h2>
+<% @done.each do |t| %>
+	<p>
+		<%= t.name %>
+		<small><%= link_to "Remove", t, :confirm => "is it ok to remove this from the list?", :method => :delete %></small>
+	</p>
+<% end %>
+
+
+<p><%= link_to "Add an item to the list", new_trailo_path %></p>
+
+15. 
+Add this to Todo controller: 
+
+	def new
+		@todo = Todo.new
+	end
+
+16. add to new.html.erb in todo: 
+
+<h1>Add new item to your Trailo To do list!</h1>
+<%= form_for @todo, :url => trailo_path(@todo) do |f| %>
+	<%= f.label :name %>: <%= f.text_field :name %>
+	<%= f.hidden_field :done, :value => false %>
+	<%= f.submit "Add to todo list" %>
+<%end %>
+
+17. add following to Todo controller
+
+def todo_params 
+		params.require(:todo).permit(:name, :done)
+	end
+
+	def create
+		@todo = Todo.new(todo_params)
+
+		if @todo.save
+			redirect_to trailo_index_path, :notice => "Your to do item was created!"
+		else
+			render "new"
+		end
+	end
+
+19. 
+	def update
+		@todo = Todo.find(params[:id])
+
+		if @todo.update_attribute(:done. true)
+			redirect_to trailo_index_path, :notice => "Your to do item was marked as done!"
+		else
+			redirect_to trailo_index_path, :notice => "Your to do item was unable to be marked as done!"
+		
+		end
+	end
+
+	def destroy
+		@todo = Todo.find(params[:id])
+		@todo.destroy
+
+		redirect_to trailo_index_path, :notice => "Your to do item was deleted!"
+	end
