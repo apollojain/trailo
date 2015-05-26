@@ -28,19 +28,19 @@ Step 1: Creating the app and setting up dependancies.
 =========================
 So, the first thing you want to do is actually create the application. In order to do this, you want to enter the following line in a directory of your choice: 
 '''
-rails new trailo
+$ rails new trailo
 '''
 What this will do is actually create a new Rails application called trailo. Now, go into your new trailo directory and open a file called "Gemfile". At the bottom of the file, include the following line: 
-'''
+
 gem 'devise'
-'''
+
 This line will place a package that allows for user authenficiation inside of your Rails application. Next, cd into your "trailo" directory, or in other words into the directory 
-'''.../trailo/''' 
+.../trailo/
 and run the following commands:
 '''
-bundle install
-bin/rails g devise:install
-bin/rails g devise user
-bin/rake db:migrate
+$ bundle install
+$ bin/rails g devise:install
+$ bin/rails g devise user
+$ bin/rake db:migrate
 '''
 These lines install the devise package and then sets up a user model for us to use later on. 
