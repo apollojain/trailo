@@ -53,7 +53,7 @@ Next, we want to generate the controller for our application. We want to run the
 ```
 $ rails g controller home
 ```
-What this does is actually create a controller for our Homepage. This basically allows the ruby backend to communicate with the Home view. We want to do two things now. First, 
+What this does is actually create a controller for our Homepage. This basically allows the ruby backend to communicate with the Home view. We want to do two things now. First, go to
 ```
 .../trailo/app/views/home/
 ```
@@ -85,3 +85,163 @@ class HomeController < ApplicationController
 end
 ```
 So, what does this do exactly? Well, basically, we set the root of our entire app to be the index of the home controller, or in other words, app/views/home/index.html.erb. What the controller is saying is that if our user is signed in, we'll redirect to the page app/views/todos/index.html.erb, which we will create soon. 
+
+Step 3: Creating all of the To Do Stuff
+===============================
+The first thing we want to do is create our to do controller: 
+```
+$ rails g controller todos
+```
+After this, we want to go to
+```
+.../trailo/config/routes.rb
+```
+and add the following line:
+```
+resources:todos
+```
+Now, let's generate a model for our todo tasks. Enter the following in terminal:
+```
+$ rails g model todo name:string done:boolean
+```
+
+Step 4: Setting up the To Do Controller
+======================================
+Now, let's set up the To Do Controller. To do this, let's go to 
+```
+.../trailo/controllers/todos_controller.rb
+```
+We are now going to add a few functions. First, let us add an index method: 
+```	
+	def index
+		@todos = Todo.where(done: false)
+		@done = Todo.where(done: true)
+	end
+```
+What this will do is filter out @todos as Todo items where done is false, and @done as ths ame, but done is true. 
+
+Next, we will add yet another function
+```	
+	def new
+		@todo = Todo.new
+	end
+```	
+This creates a new Todo object for us. 
+
+We will also create some Todo parameters, which basically defines what sorts of things the Todo object takes when you do an HTTP GET Request: 
+```	
+	def todo_params 
+		params.require(:todo).permit(:name, :done)
+	end
+```	
+Next, we will do Create, Update, and Destroy functions for our Todo Controller. All of these functions are pretty self-explanatory by their names. 
+```	
+	@todo = Todo.new(todo_params)
+
+		if @todo.save
+			redirect_to todos_path, :notice => "Your to do item was created!"
+		else
+			render "new"
+		end
+	end
+
+	def update
+		@todo = Todo.find(params[:id])
+
+		if @todo.update_attribute(:done, true)
+			redirect_to todos_path, :notice => "Your to do item was marked as done!"
+		else
+			redirect_to todos_path, :notice => "Your to do item was unable to be marked as done!"
+		end
+	end
+
+	def destroy
+		@todo = Todo.find(params[:id])
+		@todo.destroy
+
+		redirect_to todos_path, :notice => "Your to do item was deleted!"
+	end
+```	
+Type in the following into terminal
+```	
+$ rake routes
+```	
+to see what all of the paths are. 
+
+
+Step 5: Setting up the To Do View
+==================================
+Now, go to
+```
+.../trailo/app/views/todos/
+```
+and create a file called index.html.erb. In this file, we can add a single header: 
+```html
+<h1>Trailo items</h1>
+
+<h2>To do:</h2>
+<% @todos.each do |t| %>
+	<p>
+		<strong><%= t.name %></strong>
+		<small><%= link_to "Mark as Done", todo_path(t), :method => :put %></small>
+	</p>
+<%end %>
+
+<h2>Complete:</h2>
+<% @done.each do |t| %>
+	<p>
+		<%= t.name %>
+		<small><%= link_to "Remove", t, :confirm => "is it ok to remove this from the list?", :method => :delete %></small>
+	</p>
+<% end %>
+
+<p><%= link_to "Add an item to the list", new_todo_path %></p>
+```
+Basically, the above code has embedded Ruby that loops through all of your incomplete and complete todo objects and injects HTML into your view. 
+
+Next, go to
+```
+.../trailo/app/views/todos/
+```
+and create a file called new.html.erb. In this file, we can add a single header: 
+```html
+<h1>Add new item to your Trailo To do list!</h1>
+<%= form_for @todo, :url => todos_path(@todo) do |f| %>
+	<%= f.label :name %>: <%= f.text_field :name %>
+	<%= f.hidden_field :done, :value => false %>
+	<%= f.submit "Add to todo list" %>
+<%end %>
+```
+
+Lastly, we want to change the file 
+```
+.../trailo/app/views/layouts/application.html.erb
+```
+in order to allow for users to log in and log out. 
+```
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Trailo</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<% if user_signed_in? %>
+	You are currently signed in as <%= current_user.email %>, not you? 
+	<%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
+<%else %>
+	<%= link_to "Sign up", new_user_registration_path %> or <%= link_to "Sign in", new_user_session_path %>.
+<%end %>
+
+<% flash.each do |name, message| %>
+	<%= content_tag :div, message, :id => "flash_{name}" %>
+<%end%>
+
+<%= yield %>
+
+</body>
+</html>
+```
