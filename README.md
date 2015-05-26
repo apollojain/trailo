@@ -46,3 +46,42 @@ $ bin/rails g devise user
 $ bin/rake db:migrate
 ```
 These lines install the devise package and then sets up a user model for us to use later on. 
+
+Step 2: Setting up the home page
+===============================
+Next, we want to generate the controller for our application. We want to run the following line in terminal: 
+```
+$ rails g controller home
+```
+What this does is actually create a controller for our Homepage. This basically allows the ruby backend to communicate with the Home view. We want to do two things now. First, 
+```
+.../trailo/app/views/home/
+```
+and create a file called index.html.erb. In this file, we can add a single header: 
+```html
+<h1>Welcome to Trailo!</h1>
+```
+After this, we want to go to
+```
+.../trailo/config/routes.rb
+```
+and add the following line:
+```
+root :to => "home#index"
+```
+
+After this, we want to go to the file
+```
+.../trailo/app/controllers/home_controller.rb
+```
+and change the code to 
+```
+class HomeController < ApplicationController
+	def index
+		if user_signed_in?
+			redirect_to :controller => "todos", :action => "index"
+		end
+	end
+end
+```
+So, what does this do exactly? Well, basically, we set the root of our entire app to be the index of the home controller, or in other words, app/views/home/index.html.erb. What the controller is saying is that if our user is signed in, we'll redirect to the page app/views/todos/index.html.erb, which we will create soon. 
